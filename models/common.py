@@ -358,10 +358,10 @@ class DetectMultiBackend(nn.Module):
 
         super().__init__()
         w = str(weights[0] if isinstance(weights, list) else weights)
-        pt, jit, onnx, xml, engine, coreml, saved_model, pb, tflite, edgetpu, tfjs, paddle, triton = self._model_type(w)
+        pt, jit, onnx, xml, engine, coreml, saved_model, pb, tflite, edgetpu, tfjs, paddle, triton = self._model_type(w) # pt为true其他为false
         fp16 &= pt or jit or onnx or engine or triton  # FP16
         nhwc = coreml or saved_model or pb or tflite or edgetpu  # BHWC formats (vs torch BCWH)
-        stride = 32  # default stride
+        stride = 32  # default stride,缩放了32倍
         cuda = torch.cuda.is_available() and device.type != "cpu"  # use CUDA
         if not (pt or triton):
             w = attempt_download(w)  # download if not local

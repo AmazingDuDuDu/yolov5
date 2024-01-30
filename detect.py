@@ -37,11 +37,11 @@ from pathlib import Path
 
 import torch
 
-FILE = Path(__file__).resolve()
+FILE = Path(__file__).resolve() ## __file__当前文件的路径，resolve绝对路径
 ROOT = FILE.parents[0]  # YOLOv5 root directory
-if str(ROOT) not in sys.path:
+if str(ROOT) not in sys.path: #模块查询路径列表
     sys.path.append(str(ROOT))  # add ROOT to PATH
-ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
+ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # 绝对路径转为relative
 
 from ultralytics.utils.plotting import Annotator, colors, save_one_box
 
@@ -97,24 +97,25 @@ def run(
     dnn=False,  # use OpenCV DNN for ONNX inference
     vid_stride=1,  # video frame-rate stride
 ):
+    # 处理预测路径
     source = str(source)
     save_img = not nosave and not source.endswith(".txt")  # save inference images
-    is_file = Path(source).suffix[1:] in (IMG_FORMATS + VID_FORMATS)
+    is_file = Path(source).suffix[1:] in (IMG_FORMATS + VID_FORMATS)# suffix后缀.jpg
     is_url = source.lower().startswith(("rtsp://", "rtmp://", "http://", "https://"))
-    webcam = source.isnumeric() or source.endswith(".streams") or (is_url and not is_file)
+    webcam = source.isnumeric() or source.endswith(".streams") or (is_url and not is_file) #0是否是电脑上摄像头的路径
     screenshot = source.lower().startswith("screen")
     if is_url and is_file:
         source = check_file(source)  # download
 
     # Directories
-    save_dir = increment_path(Path(project) / name, exist_ok=exist_ok)  # increment run
+    save_dir = increment_path(Path(project) / name, exist_ok=exist_ok)  # increment run，增量目录，检测文件夹下的数字到几，每次结果路径的编号递增
     (save_dir / "labels" if save_txt else save_dir).mkdir(parents=True, exist_ok=True)  # make dir
 
     # Load model
-    device = select_device(device)
-    model = DetectMultiBackend(weights, device=device, dnn=dnn, data=data, fp16=half)
-    stride, names, pt = model.stride, model.names, model.pt
-    imgsz = check_img_size(imgsz, s=stride)  # check image size
+    device = select_device(device) # 根据配置选择
+    model = DetectMultiBackend(weights, device=device, dnn=dnn, data=data, fp16=half)# 根据不同深度学习框架
+    stride, names, pt = model.stride, model.names, model.pt# pt pytorch
+    imgsz = check_img_size(imgsz, s=stride)  # check image size,是否是32的背书
 
     # Dataloader
     bs = 1  # batch_size
@@ -129,8 +130,8 @@ def run(
     vid_path, vid_writer = [None] * bs, [None] * bs
 
     # Run inference
-    model.warmup(imgsz=(1 if pt or model.triton else bs, 3, *imgsz))  # warmup
-    seen, windows, dt = 0, [], (Profile(device=device), Profile(device=device), Profile(device=device))
+    model.warmup(imgsz=(1 if pt or model.triton else bs, 3, *imgsz))  # warmup初始化1张空白图片
+    seen, windows, dt = 0, [], (Profile(device=device), Profile(device=device), Profile(device=device)) #存储中间结果信息
     for path, im, im0s, vid_cap, s in dataset:
         with dt[0]:
             im = torch.from_numpy(im).to(model.device)
@@ -295,15 +296,15 @@ def parse_opt():
     parser.add_argument("--vid-stride", type=int, default=1, help="video frame-rate stride")
     opt = parser.parse_args()
     opt.imgsz *= 2 if len(opt.imgsz) == 1 else 1  # expand
-    print_args(vars(opt))
+    print_args(vars(opt)) # 打印参数信息，opt存储所有的参数信息
     return opt
 
 
 def main(opt):
-    check_requirements(ROOT / "requirements.txt", exclude=("tensorboard", "thop"))
+    check_requirements(ROOT / "requirements.txt", exclude=("tensorboard", "thop")) # 检测依赖包是否全部安装
     run(**vars(opt))
 
 
 if __name__ == "__main__":
-    opt = parse_opt()
+    opt = parse_opt() #解析命令行传入的参数
     main(opt)

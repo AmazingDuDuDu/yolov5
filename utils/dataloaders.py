@@ -151,7 +151,7 @@ class SmartDistributedSampler(distributed.DistributedSampler):
         return iter(idx)
 
 
-def create_dataloader(
+def create_dataloader( # 定义数据处理
     path,
     imgsz,
     batch_size,
@@ -210,7 +210,7 @@ def create_dataloader(
     ), dataset
 
 
-class InfiniteDataLoader(dataloader.DataLoader):
+class InfiniteDataLoader(dataloader.DataLoader): 
     """
     Dataloader that reuses workers.
 
@@ -320,7 +320,7 @@ class LoadImages:
         self.stride = stride
         self.files = images + videos
         self.nf = ni + nv  # number of files
-        self.video_flag = [False] * ni + [True] * nv
+        self.video_flag = [False] * ni + [True] * nv # 食品标志
         self.mode = "image"
         self.auto = auto
         self.transforms = transforms  # optional
@@ -493,7 +493,7 @@ def img2label_paths(img_paths):
     return [sb.join(x.rsplit(sa, 1)).rsplit(".", 1)[0] + ".txt" for x in img_paths]
 
 
-class LoadImagesAndLabels(Dataset):
+class LoadImagesAndLabels(Dataset): #包含所有13种数据增强和数据清洗处理的操作
     # YOLOv5 train_loader/val_loader, loads images and labels for training and validation
     cache_version = 0.6  # dataset labels *.cache version
     rand_interp_methods = [cv2.INTER_NEAREST, cv2.INTER_LINEAR, cv2.INTER_CUBIC, cv2.INTER_AREA, cv2.INTER_LANCZOS4]
