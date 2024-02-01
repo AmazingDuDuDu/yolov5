@@ -503,8 +503,8 @@ class LoadImagesAndLabels(Dataset): #包含所有13种数据增强和数据清�
         path,
         img_size=640,
         batch_size=16,
-        augment=False,
-        hyp=None,
+        augment=False, # albumentation
+        hyp=None,#参数模型参数读成字典
         rect=False,
         image_weights=False,
         cache_images=False,
